@@ -82,69 +82,75 @@ For more information about the arquitecture and the instructions, see the (CRISC
 
 In the examples folder is a program for turning on a LED based in the status of a button. If not using the Assembler the best way to build a code like this is to write it in any readable fashion (like using Assembly symbols per say), and manually translate it to the binary code, like in the example shown below:
 
-config_gpio:
-00: XOR R0, R0   ;; (0)101[SSDD] 0b01010000 0x50
-01: LI R1, 1     ;; (11)XXXX[DD] 0b11000101 0xC5
-02: OUT R1       ;; (10101)1[SS] 0b10101101 0xAD
+config_gpio: </br>
+00: XOR R0, R0   ;; (0)101[SSDD] 0b01010000 0x50 </br>
+01: LI R1, 1     ;; (11)XXXX[DD] 0b11000101 0xC5 </br>
+02: OUT R1       ;; (10101)1[SS] 0b10101101 0xAD </br>
 
-if:
-03: LI R0, 2     ;; (11)XXXX[DD] 0b11001000 0xC8
-04: IN R2        ;; (10101)0[DD] 0b10101010 0xAA
-05: AND R2, R0   ;; (0)011[SSDD] 0b00110010 0x32
-06: LI R0, E     ;; (11)XXXX[DD] 0b11111000 0xF8
-07: BZ R0        ;; (10100)1[DD] 0b10100100 0xA4
 
-then:
-08: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4
-09: IN R2        ;; (10101)0[DD] 0b10101010 0xAA
-0A: OR R2, R0    ;; (0)100[SSDD] 0b01000010 0x42
-0B: OUT R2       ;; (10101)1[SS] 0b10101110 0xAE
-0C: LI R0, 3     ;; (11)XXXX[DD] 0b11001100 0xCC
-0D: B R0         ;; (10100)0[DD] 0b10100000 0xA0
+if: </br>
+03: LI R0, 2     ;; (11)XXXX[DD] 0b11001000 0xC8 </br>
+04: IN R2        ;; (10101)0[DD] 0b10101010 0xAA </br>
+05: AND R2, R0   ;; (0)011[SSDD] 0b00110010 0x32 </br>
+06: LI R0, E     ;; (11)XXXX[DD] 0b11111000 0xF8 </br>
+07: BZ R0        ;; (10100)1[DD] 0b10100100 0xA4 </br>
 
-else:
-0E: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4
-0F: IN R2        ;; (10101)0[DD] 0b10101010 0xAA
-10: NOT R0       ;; (1011)00[DD] 0b10110000 0xD0
-11: AND R2, R0   ;; (0)011[SSDD] 0b00110010 0x32
-12: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4
-13: OUT R2       ;; (10101)1[SS] 0b10101110 0xAE
-14: LI R0, 3     ;; (11)XXXX[DD] 0b11001100 0xCC
-15: B R0         ;; (10100)0[DD] 0b10100000 0xA0
+
+then: </br>
+08: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4 </br>
+09: IN R2        ;; (10101)0[DD] 0b10101010 0xAA </br>
+0A: OR R2, R0    ;; (0)100[SSDD] 0b01000010 0x42 </br>
+0B: OUT R2       ;; (10101)1[SS] 0b10101110 0xAE </br>
+0C: LI R0, 3     ;; (11)XXXX[DD] 0b11001100 0xCC </br>
+0D: B R0         ;; (10100)0[DD] 0b10100000 0xA0 </br>
+
+
+else: </br>
+0E: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4 </br>
+0F: IN R2        ;; (10101)0[DD] 0b10101010 0xAA </br>
+10: NOT R0       ;; (1011)00[DD] 0b10110000 0xD0 </br>
+11: AND R2, R0   ;; (0)011[SSDD] 0b00110010 0x32 </br>
+12: LI R0, 1     ;; (11)XXXX[DD] 0b11000100 0xC4 </br>
+13: OUT R2       ;; (10101)1[SS] 0b10101110 0xAE </br>
+14: LI R0, 3     ;; (11)XXXX[DD] 0b11001100 0xCC </br>
+15: B R0         ;; (10100)0[DD] 0b10100000 0xA0 </br>
 
 Note that the development goes from left to right: first the symbols are written, the addresses are resolved, and then the binary, and the subsequent hexadecimal value for the instruction is obtained from the instructions format. This is highly tedious.
 
 Using a Assembler facilitate the process. Just code the Assembly part and let the Assembler do the rest:
 
-// Config PORTA of GPIO with P0 as OUTPUT and the remaining as INPUT:
-XOR R0, R0
-LI R1, 1	
-OUT R1	
+// Config PORTA of GPIO with P0 as OUTPUT and the remaining as INPUT: </br>
+XOR R0, R0 </br>
+LI R1, 1	 </br>
+OUT R1	 </br>
 
-// IF button is pressed:
-LI R0, 2	
-IN R2	
-AND R2, R0
-LI R0, E	
-BZ R0	
 
-// THEN turn on the LED:
-LI R0, 1	
-IN R2	
-OR R2, R0 
-OUT R2	
-LI R0, 3	
-B R0
+// IF button is pressed: </br>
+LI R0, 2	 </br>
+IN R2	 </br>
+AND R2, R0 </br>
+LI R0, E	 </br>
+BZ R0	 </br>
 
-// ELSE turn off the LED:
-LI R0, 1	
-IN R2	
-NOT R0	
-AND R2, R0 
-LI R0, 1	
-OUT R2	
-LI R0, 3	
-B R0	
+
+// THEN turn on the LED: </br>
+LI R0, 1	 </br>
+IN R2	 </br>
+OR R2, R0  </br>
+OUT R2	 </br>
+LI R0, 3	 </br>
+B R0 </br>
+
+
+// ELSE turn off the LED: </br>
+LI R0, 1	 </br>
+IN R2	 </br>
+NOT R0	 </br>
+AND R2, R0  </br>
+LI R0, 1	 </br>
+OUT R2	 </br>
+LI R0, 3	 </br>
+B R0	 </br>
 
 Sadly because some limitations of the CRISC-1 the automatic procedures addresses cannot be done (yet), so it have to be manually, but the rest is done automatically by using CASM. 
 
